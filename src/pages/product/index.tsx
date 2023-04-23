@@ -2,11 +2,21 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 
-import { api } from "~/utils/api";
 import Layout from "~/components/layout";
+import { api } from "~/utils/api";
 
 const ProductPage: NextPage = () => {
-  const { data: products } = api.product.getProducts.useQuery();
+  const {
+    data: products,
+    isLoading,
+    isFetching,
+    refetch,
+  } = api.product.getProducts.useQuery();
+  const { mutate } = api.product.deleteProduct.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
 
   return (
     <>
@@ -26,7 +36,8 @@ const ProductPage: NextPage = () => {
             Crear producto
           </Link>
         </div>
-
+        {isLoading && <div className="text-white">Loading...</div>}
+        {isFetching && <div className="text-white">Fetching...</div>}
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-violet-900">
             <tr>
@@ -60,20 +71,20 @@ const ProductPage: NextPage = () => {
                   <div className="text-sm  text-white">{product.price}</div>
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                  <a
-                    href="#"
+                  <Link
+                    href={`/product/edit/${product.id}`}
                     className=" rounded-sm bg-orange-400 px-2 py-1 text-white hover:bg-orange-600"
                   >
                     Editar
-                  </a>
+                  </Link>
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                  <a
-                    href="#"
+                  <span
+                    onClick={() => mutate({ id: product.id })}
                     className=" rounded-sm bg-red-500 px-2 py-1 text-white hover:bg-red-600"
                   >
                     Borrar
-                  </a>
+                  </span>
                 </td>
               </tr>
             ))}

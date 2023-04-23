@@ -5,27 +5,11 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import { api } from "~/utils/api";
 import Layout from "~/components/layout";
+import CreateEditForm from "~/shared/products/components/create-edit-form";
 
-type Inputs = {
-  name: string;
-  price: string;
-};
-
-const ProductPage: NextPage = () => {
+const CreateProductPage: NextPage = () => {
   //   const { data: products } = api.product.getProducts.useQuery();
   const { mutate } = api.product.createProduct.useMutation();
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<Inputs>();
-
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    mutate(data);
-  };
-
-  console.log(watch("name")); // watch input value by passing the name of it
 
   return (
     <>
@@ -37,47 +21,11 @@ const ProductPage: NextPage = () => {
 
       <Layout>
         <div className="flex  h-full items-center justify-center">
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex  rounded-xl bg-violet-900 px-8 py-10 shadow-sm"
-          >
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="block font-medium text-white" htmlFor="name">
-                  Nombre:
-                </label>
-                <input
-                  className="block w-full rounded-lg border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-                  type="text"
-                  id="name"
-                  {...register("name", { required: true })}
-                  placeholder="Introduce el nombre"
-                />
-              </div>
-              <div>
-                <label className="block font-medium text-white" htmlFor="price">
-                  Precio:
-                </label>
-                <input
-                  className="block w-full rounded-lg border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-                  type="number"
-                  id="price"
-                  {...register("price", { required: true })}
-                  placeholder="Introduce el precio"
-                />
-              </div>
-              <button
-                type="submit"
-                className="rounded-lg bg-lime-500 px-4 py-2 text-white"
-              >
-                Crear producto
-              </button>
-            </div>
-          </form>
+          <CreateEditForm />
         </div>
       </Layout>
     </>
   );
 };
 
-export default ProductPage;
+export default CreateProductPage;
